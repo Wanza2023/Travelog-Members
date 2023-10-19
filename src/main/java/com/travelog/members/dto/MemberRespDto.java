@@ -18,7 +18,7 @@ public class MemberRespDto {
 
     public MemberRespDto(Member member) {
         id = member.getId();
-        email = getEmail();
+        email = member.getEmail();
         nickName = member.getNickName();
         birth = member.getBirth();
         gender = member.getGender();
