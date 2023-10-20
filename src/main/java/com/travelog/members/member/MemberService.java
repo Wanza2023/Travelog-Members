@@ -29,11 +29,7 @@ public class MemberService {
      * 등록
      */
     @Transactional
-    public void join(SignupReqDto dto) {
-
-        Optional<Member> memberCheck = memberRepository.findByEmail(dto.getEmail());
-        if (memberCheck.isPresent()) throw new RuntimeException("존재하는 아이디입니다.");
-
+    public Long join(SignupReqDto dto) {
         Member member = Member.builder()
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
@@ -45,13 +41,15 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
+
+        return member.getId();
     }
 
     @Transactional
     public LoginRespDto login(LoginReqDto loginReqDto) {
 
         Member member = memberRepository.findByEmail(loginReqDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 사용자입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         if (!isPasswordSame(member, loginReqDto.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
@@ -105,12 +103,24 @@ public class MemberService {
 
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 id 입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 id 입니다."));
     }
 
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이메일입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 이메일입니다."));
+    }
+
+    public Member findByNickName(String nickName) {
+        return memberRepository.findByNickName(nickName)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 닉네임입니다."));
+    }
+
+    public void checkDuplicate(String email, String nickName) {
+        Optional<Member> byEmail = memberRepository.findByEmail(email);
+        Optional<Member> byNickName = memberRepository.findByNickName(nickName);
+        if (byEmail.isPresent()) throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        if (byNickName.isPresent()) throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
     }
 
 
