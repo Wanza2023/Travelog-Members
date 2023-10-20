@@ -36,8 +36,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName(version)
                 .apiInfo(this.apiInfo())
-                .securityContexts(Arrays.asList(securityContext())) // swagger에서 jwt 토큰값 넣기위한 설정
-                .securitySchemes(Arrays.asList(apiKey())) // swagger에서 jwt 토큰값 넣기위한 설정
+                .securityContexts(Arrays.asList(securityContext())) // swagger에서 jwt 토큰값 넣기 위한 설정
+                .securitySchemes(Arrays.asList(apiKey())) // swagger에서 jwt 토큰값 넣기 위한 설정
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.travelog.members"))
                 .paths(PathSelectors.any())

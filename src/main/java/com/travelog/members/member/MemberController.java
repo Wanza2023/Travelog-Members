@@ -2,6 +2,7 @@ package com.travelog.members.member;
 
 import com.travelog.members.dto.*;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +24,20 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @ApiOperation(value = "회원가입")
+    @ApiOperation(value = "회원가입", notes = "이메일, 비밀번호, 닉네임, 생년월일, 성별, 프로필 사진을 통해 회원가입을 진행합니다.")
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupReqDto dto, BindingResult bindingResult) {
+
+//        try {
+//
+//        }
+
         bindingResultErrorsCheck(bindingResult);
         memberService.join(dto);
         return new ResponseEntity<>(CMRespDto.builder().isSuccess(true).msg("회원가입 완료").build(), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "로그인")
+    @ApiOperation(value = "로그인", notes = "이메일, 비밀번호로 로그인을 진행합니다.")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginReqDto dto, BindingResult bindingResult) {
 
@@ -50,7 +56,7 @@ public class MemberController {
         }
     }
 
-    @ApiOperation(value = "모든 회원 조회")
+    @ApiOperation(value = "모든 회원 조회", notes = "GET 요청을 보내면 모든 회원을 조회합니다.")
     @GetMapping("/members")
     public ResponseEntity<?> findAll() {
         List<MemberRespDto> members = memberService.findAll();
