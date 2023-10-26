@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
@@ -18,7 +19,9 @@ public class CustomUserDetails implements UserDetails {
 //        return member.getRoles().stream()
 //                .map(SimpleGrantedAuthority::new)
 //                .collect(Collectors.toList());
-        return null;
+        Collection<GrantedAuthority> collectors = new ArrayList<>();
+        collectors.add(() -> {return "ROLE_" + member.getRole();});
+        return collectors;
     }
 
     @Override

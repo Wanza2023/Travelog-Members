@@ -31,7 +31,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰 생성
-    public String createToken(String userPk) {  // userPK = email
+    public String createToken(Long userPk) {  // userPK = email
 
         long tokenValidTime = 30 * 60 * 1000L;  // 토큰 유효시간 30분
         Date now = new Date();  // 토큰 발행 시간 정보
@@ -39,7 +39,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(userPk)
+                .setSubject(String.valueOf(userPk))
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(SignatureAlgorithm.HS256, secretKey)  // 암호화 알고리즘과, secret 값

@@ -68,6 +68,16 @@ public class MemberController {
                 .body(members).build(), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "토큰으로 회원 조회")
+    @GetMapping("/members/authorize/{token}")
+    public ResponseEntity<?> authorizeMember(@PathVariable String token) {
+        MemberRespDto memberRespDto = memberService.authorizeMember(token);
+        return new ResponseEntity<>(CMRespDto.builder()
+                .isSuccess(true)
+                .msg("토큰으로 회원 조회")
+                .body(memberRespDto).build(), HttpStatus.OK);
+    }
+
 //    @GetMapping("/members/nickName/{nickName}/validate")
 //    public ResponseEntity<?> nickNameCheck(@PathVariable String nickName) {
 //
