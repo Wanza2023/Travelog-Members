@@ -7,11 +7,11 @@ import com.travelog.members.dto.MemberRespDto;
 import com.travelog.members.dto.SignupReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,7 +57,7 @@ public class MemberService {
         }
 
         // 로그인에 성공하면 email, roles 로 토큰 생성 후 반환
-        String token = jwtTokenProvider.createToken(member.getId());
+        String token = jwtTokenProvider.createToken(member.getEmail());
 
         LoginRespDto loginRespDto = new LoginRespDto();
         loginRespDto.setEmail(loginReqDto.getEmail());
@@ -94,10 +94,18 @@ public class MemberService {
     /**
      * 조회
      */
-    public MemberRespDto authorizeMember(String token) {
-        String userPk = jwtTokenProvider.getUserPk(token);
-        Member findMember = findById(Long.valueOf(userPk));
+    public MemberRespDto authorizeMember(HttpServletRequest request) {
+
+        String token = jwtTokenProvider.resolveToken(request);
+
+        if (token == null || !jwtTokenProvider.validateToken(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+        String email = jwtTokenProvider.getUserPk(token);
+        Member findMember = findByEmail(email);
         return new MemberRespDto(findMember);
+
+
     }
 
     public List<MemberRespDto> findAll() {

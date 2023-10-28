@@ -1,6 +1,5 @@
 package com.travelog.members.auth;
 
-import com.travelog.members.auth.CustomUserDetails;
 import com.travelog.members.member.Member;
 import com.travelog.members.member.MemberRepository;
 import lombok.RequiredArgsConstructor;

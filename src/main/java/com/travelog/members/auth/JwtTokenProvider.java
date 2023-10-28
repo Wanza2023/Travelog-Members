@@ -1,6 +1,5 @@
 package com.travelog.members.auth;
 
-import com.travelog.members.auth.CustomUserDetailService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰 생성
-    public String createToken(Long userPk) {  // userPK = email
+    public String createToken(String userPk) {  // userPK = email
 
         long tokenValidTime = 30 * 60 * 1000L;  // 토큰 유효시간 30분
         Date now = new Date();  // 토큰 발행 시간 정보
@@ -39,7 +38,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(String.valueOf(userPk))
+                .setSubject(userPk)
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(SignatureAlgorithm.HS256, secretKey)  // 암호화 알고리즘과, secret 값
@@ -71,6 +70,10 @@ public class JwtTokenProvider {
 
     // Request의 Header에서 token 값 가져오기
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("X-AUTH-TOKEN");
+        String header = request.getHeader("Authorization");
+        if (header == null) throw new IllegalArgumentException("헤더에 Authorization이 없습니다.");
+        if (!header.startsWith("Bearer")) throw new IllegalArgumentException("토큰이 Bearer로 시작하지 않습니다.");
+
+        return header.substring("Bearer ".length());
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -69,13 +70,21 @@ public class MemberController {
     }
 
     @ApiOperation(value = "토큰으로 회원 조회")
-    @GetMapping("/members/authorize/{token}")
-    public ResponseEntity<?> authorizeMember(@PathVariable String token) {
-        MemberRespDto memberRespDto = memberService.authorizeMember(token);
-        return new ResponseEntity<>(CMRespDto.builder()
-                .isSuccess(true)
-                .msg("토큰으로 회원 조회")
-                .body(memberRespDto).build(), HttpStatus.OK);
+    @GetMapping("/members/authorize")
+    public ResponseEntity<?> authorizeMember(HttpServletRequest request) {
+        try {
+            MemberRespDto memberRespDto = memberService.authorizeMember(request);
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(true)
+                    .msg("토큰으로 회원 조회 성공")
+                    .body(memberRespDto).build(), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(false)
+                    .msg("토큰으로 회원 조회 실패")
+                    .body(e.getMessage()).build(), HttpStatus.OK);
+        }
+
     }
 
 //    @GetMapping("/members/nickName/{nickName}/validate")
