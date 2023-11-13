@@ -19,6 +19,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/members")
 public class MemberController {
 
     private final MemberService memberService;
@@ -60,7 +61,7 @@ public class MemberController {
     }
 
     @ApiOperation(value = "모든 회원 조회", notes = "GET 요청을 보내면 모든 회원을 조회합니다.")
-    @GetMapping("/members")
+    @GetMapping
     public ResponseEntity<?> findAll() {
         List<MemberRespDto> members = memberService.findAll();
         return new ResponseEntity<>(CMRespDto.builder()
@@ -70,7 +71,7 @@ public class MemberController {
     }
 
     @ApiOperation(value = "토큰으로 회원 조회")
-    @GetMapping("/members/authorize")
+    @GetMapping("/authorize")
     public ResponseEntity<?> authorizeMember(HttpServletRequest request) {
         try {
             MemberRespDto memberRespDto = memberService.authorizeMember(request);
