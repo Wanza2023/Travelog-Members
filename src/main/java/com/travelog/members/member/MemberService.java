@@ -1,10 +1,7 @@
 package com.travelog.members.member;
 
 import com.travelog.members.auth.JwtTokenProvider;
-import com.travelog.members.dto.LoginReqDto;
-import com.travelog.members.dto.LoginRespDto;
-import com.travelog.members.dto.MemberRespDto;
-import com.travelog.members.dto.SignupReqDto;
+import com.travelog.members.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -106,6 +103,13 @@ public class MemberService {
         return new MemberRespDto(findMember);
 
 
+    }
+
+    // 회원 프로필(닉네임) 조회
+    public MemberProfileResDto getMember(Long id){
+        Member member = memberRepository.findById(id)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 id입니다."));
+        return new MemberProfileResDto(member);
     }
 
     public List<MemberRespDto> findAll() {

@@ -60,6 +60,12 @@ public class MemberController {
         }
     }
 
+    @ApiOperation(value = "회원 프로필(닉네임) 조회", notes = "GET 요청을 보내면 해당 회원 정보를 조회합니다.")
+    @GetMapping("/{memberId}")
+    public MemberProfileResDto getMemeber(@PathVariable Long memberId){
+        return memberService.getMember(memberId);
+    }
+
     @ApiOperation(value = "모든 회원 조회", notes = "GET 요청을 보내면 모든 회원을 조회합니다.")
     @GetMapping
     public ResponseEntity<?> findAll() {
