@@ -1,6 +1,7 @@
 package com.travelog.members.auth;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -19,27 +21,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludePath = {"/login", "/signup", "/members"};
+        String[] excludePath = {"/login", "/signup", "/members", "/swagger-ui"};
         String path = request.getRequestURI();
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // 헤더에서 토큰 받아오기
-        String token = jwtTokenProvider.resolveToken(request);
 
-        // 토큰이 유효하다면
+        String header = jwtTokenProvider.getAuthHeader(request);
+        String token = null;
+
+        if (header != null) token = jwtTokenProvider.getToken(header);
+
         if (token != null && jwtTokenProvider.validateToken(token)) {
-
-            // 토큰으로부터 유저 정보를 받아
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
-
-            // SecurityContext 에 객체 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        // 다음 Filter 실행
         filterChain.doFilter(request, response);
     }
 }

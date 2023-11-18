@@ -1,4 +1,4 @@
-package com.travelog.members.dto;
+package com.travelog.members.dto.resp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

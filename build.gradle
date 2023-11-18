@@ -8,7 +8,7 @@ group = 'com.travelog'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '11'
 }
 
 configurations {
@@ -35,13 +35,14 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
 
 	//Swagger
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-	implementation (group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2')
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
 	annotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

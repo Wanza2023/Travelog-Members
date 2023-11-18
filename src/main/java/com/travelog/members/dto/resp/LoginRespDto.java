@@ -1,4 +1,4 @@
-package com.travelog.members.dto;
+package com.travelog.members.dto.resp;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

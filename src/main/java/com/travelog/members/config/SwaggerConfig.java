@@ -36,8 +36,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName(version)
                 .apiInfo(this.apiInfo())
-                .securityContexts(Arrays.asList(securityContext())) // swagger에서 jwt 토큰값 넣기 위한 설정
-                .securitySchemes(Arrays.asList(apiKey())) // swagger에서 jwt 토큰값 넣기 위한 설정
+                .securityContexts(List.of(securityContext())) // swagger에서 jwt 토큰값 넣기 위한 설정
+                .securitySchemes(List.of(apiKey())) // swagger에서 jwt 토큰값 넣기 위한 설정
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.travelog.members"))
                 .paths(PathSelectors.any())
@@ -46,7 +46,7 @@ public class SwaggerConfig {
 
     // swagger에서 jwt 토큰값 넣기위한 설정
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "X-AUTH-TOKEN", "header");
+        return new ApiKey("JWT", "Authorization", "header");
     }
 
     private SecurityContext securityContext() {
@@ -63,6 +63,6 @@ public class SwaggerConfig {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+        return List.of(new SecurityReference("JWT", authorizationScopes));
     }
 }
