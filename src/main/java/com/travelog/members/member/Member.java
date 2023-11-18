@@ -42,6 +42,12 @@ public class Member {
         this.gender = gender;
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+
+
     @Builder
     public Member(String email, String password, String nickName, MemberRole role, LocalDate birth, char gender, byte[] pfp) {
         this.email = email;

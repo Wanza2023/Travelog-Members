@@ -1,6 +1,13 @@
 package com.travelog.members.member;
 
-import com.travelog.members.dto.*;
+import com.travelog.members.dto.resp.MemberProfileResDto;
+import com.travelog.members.dto.req.LoginReqDto;
+import com.travelog.members.dto.req.SignupReqDto;
+import com.travelog.members.dto.req.pwReqDto;
+import com.travelog.members.dto.resp.CMRespDto;
+import com.travelog.members.dto.resp.LoginRespDto;
+import com.travelog.members.dto.resp.MemberRespDto;
+import com.travelog.members.dto.resp.PwInquiryRespDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +67,12 @@ public class MemberController {
         }
     }
 
+    @ApiOperation(value = "회원 프로필(닉네임) 조회", notes = "GET 요청을 보내면 해당 회원 정보를 조회합니다.")
+    @GetMapping("/{memberId}")
+    public MemberProfileResDto getMemeber(@PathVariable Long memberId){
+        return memberService.getMember(memberId);
+    }
+
     @ApiOperation(value = "모든 회원 조회", notes = "GET 요청을 보내면 모든 회원을 조회합니다.")
     @GetMapping
     public ResponseEntity<?> findAll() {
@@ -85,7 +98,49 @@ public class MemberController {
                     .msg("토큰으로 회원 조회 실패")
                     .body(e.getMessage()).build(), HttpStatus.OK);
         }
+    }
 
+    @ApiOperation(value = "비밀번호 찾기")
+    @PostMapping("/pwInquiry")
+    public ResponseEntity<?> pwInquiry(@RequestBody String email) {
+        //이메일 입력
+        //해당 이메일로 인증번호 발송
+        //틀릴시 실패, 성공시 비밀번호 재설정
+        //On-Premise 서버인 관계로 이메일 인증 건너뛰기
+        try {
+            Long memberId = memberService.findByEmail(email).getId();
+            String href = "http://172.16.210.131:8081/members/password";
+            String method = "PATCH";
+            PwInquiryRespDto respDto = new PwInquiryRespDto(memberId, href, method);
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(true)
+                    .msg("유효한 이메일입니다. 비밀번호 재설정 가능")
+                    .body(respDto).build(), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(false)
+                    .msg("실패")
+                    .body(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "비밀번호 변경")
+    @PatchMapping("/password")
+    public ResponseEntity<?> changePassword(@RequestBody pwReqDto reqDto) {
+        try {
+            Long memberId = reqDto.getMemberId();
+            String password = reqDto.getPassword();
+            memberService.updatePassword(memberId, password);
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(true)
+                    .msg("비밀번호 변경 성공")
+                    .body("memberId=" + memberId).build(), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(false)
+                    .msg("비밀번호 변경 실패")
+                    .body(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 //    @GetMapping("/members/nickName/{nickName}/validate")

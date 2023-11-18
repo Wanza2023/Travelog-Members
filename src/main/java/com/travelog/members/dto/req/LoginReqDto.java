@@ -1,4 +1,4 @@
-package com.travelog.members.dto;
+package com.travelog.members.dto.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
