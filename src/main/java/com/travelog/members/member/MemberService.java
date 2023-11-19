@@ -1,7 +1,6 @@
 package com.travelog.members.member;
 
 import com.travelog.members.auth.JwtTokenProvider;
-import com.travelog.members.dto.resp.MemberProfileResDto;
 import com.travelog.members.dto.req.LoginReqDto;
 import com.travelog.members.dto.resp.LoginRespDto;
 import com.travelog.members.dto.resp.MemberRespDto;
@@ -110,10 +109,9 @@ public class MemberService {
     }
 
     // 회원 프로필(닉네임) 조회
-    public MemberProfileResDto getMember(Long id){
-        Member member = memberRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 id입니다."));
-        return new MemberProfileResDto(member);
+    public MemberRespDto getMember(Long memberId){
+        Member member = findById(memberId);
+        return new MemberRespDto(member);
     }
 
     public List<MemberRespDto> findAll() {

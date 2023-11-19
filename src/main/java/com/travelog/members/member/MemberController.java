@@ -1,6 +1,5 @@
 package com.travelog.members.member;
 
-import com.travelog.members.dto.resp.MemberProfileResDto;
 import com.travelog.members.dto.req.LoginReqDto;
 import com.travelog.members.dto.req.SignupReqDto;
 import com.travelog.members.dto.req.pwReqDto;
@@ -67,10 +66,14 @@ public class MemberController {
         }
     }
 
-    @ApiOperation(value = "회원 프로필(닉네임) 조회", notes = "GET 요청을 보내면 해당 회원 정보를 조회합니다.")
+    @ApiOperation(value = "회원 프로필ㅂ 조회", notes = "GET 요청을 보내면 해당 회원 정보를 조회합니다.")
     @GetMapping("/{memberId}")
-    public MemberProfileResDto getMemeber(@PathVariable Long memberId){
-        return memberService.getMember(memberId);
+    public ResponseEntity<?> getMember(@PathVariable Long memberId){
+        MemberRespDto respDto = memberService.getMember(memberId);
+        return new ResponseEntity<>(CMRespDto.builder()
+                .isSuccess(true)
+                .msg("회원 조회 성공")
+                .body(respDto).build(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "모든 회원 조회", notes = "GET 요청을 보내면 모든 회원을 조회합니다.")
