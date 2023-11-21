@@ -118,9 +118,8 @@ public class MemberService {
     }
 
     // 회원 프로필(닉네임) 조회
-    public MemberRespDto getMember(Long id){
-        Member member = memberRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 id입니다."));
+    public MemberRespDto getMember(Long memberId){
+        Member member = findById(memberId);
         return new MemberRespDto(member);
     }
 
