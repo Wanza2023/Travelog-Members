@@ -2,7 +2,10 @@ package com.travelog.members.bookmark;
 
 import com.travelog.members.board.BoardDto;
 import com.travelog.members.board.BoardServiceFeignClient;
+import com.travelog.members.dto.BoardBookmarkReqDto;
 import com.travelog.members.dto.CMRespDto;
+import com.travelog.members.dto.MemberProfileResDto;
+import com.travelog.members.member.MemberService;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ public class BookmarkController {
     private final BoardServiceFeignClient boardServiceFeignClient;
     @Autowired
     private final BookmarkService bookmarkService;
+    @Autowired
+    private final MemberService memberService;
 
     // 북마크 리스트 가져오기
     @GetMapping(value = "/{memberId}")
@@ -53,5 +58,17 @@ public class BookmarkController {
     public ResponseEntity<?> deleteBookmark(@PathVariable Long memberId, @PathVariable Long boardId){
         bookmarkService.deleteBookmark(memberId, boardId);
         return new ResponseEntity<>(CMRespDto.builder().isSuccess(true).msg("북마크에서 삭제되었습니다.").build(), HttpStatus.OK);
+    }
+
+    // 북마크 확인
+    @PostMapping("/isBookmark")
+    public Boolean isBookmark(@Valid @RequestBody BoardBookmarkReqDto dto){
+        try {
+            MemberProfileResDto memberProfileResDto = memberService.authMember(dto.getToken());
+            return bookmarkService.isBookmark(memberProfileResDto.getId(), dto.getBoardId());
+            // return memberProfileResDto.getNickname();
+        } catch (IllegalArgumentException e){
+            return null;
+        }
     }
 }

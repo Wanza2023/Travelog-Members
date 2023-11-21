@@ -105,6 +105,15 @@ public class MemberService {
 
     }
 
+    public MemberProfileResDto authMember(String token){
+        if (token == null || !jwtTokenProvider.validateToken(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+        String email = jwtTokenProvider.getUserPk(token);
+        Member findMember = findByEmail(email);
+        return new MemberProfileResDto(findMember);
+    }
+
     // 회원 프로필(닉네임) 조회
     public MemberProfileResDto getMember(Long id){
         Member member = memberRepository.findById(id)

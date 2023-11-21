@@ -32,4 +32,11 @@ public class BookmarkService {
         Bookmark bookmark = bookmarkRepository.findByMemberIdAndBoardId(memberId, boardId);
         bookmarkRepository.delete(bookmark);
     }
+
+    // 북마크 확인
+    @Transactional
+    public boolean isBookmark(Long memberId, Long boardId) {
+        Bookmark bookmark = bookmarkRepository.findByMemberIdAndBoardId(memberId, boardId);
+        return bookmark != null;
+    }
 }
