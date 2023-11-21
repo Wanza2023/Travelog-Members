@@ -1,6 +1,6 @@
 package com.travelog.members.bookmark;
 
-import com.travelog.members.board.BoardDto;
+import com.travelog.members.dto.BoardDto;
 import com.travelog.members.board.BoardServiceFeignClient;
 import com.travelog.members.dto.BoardBookmarkReqDto;
 import com.travelog.members.dto.resp.MemberRespDto;
