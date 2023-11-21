@@ -39,7 +39,8 @@ public class BookmarkController {
         } catch (FeignException e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(CMRespDto.builder()
-                    .isSuccess(true).msg("북마크 가져오기 실패").build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    .isSuccess(true).msg("북마크 가져오기 실패")
+                    .body(e.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -56,19 +57,25 @@ public class BookmarkController {
     // 북마크 삭제
     @DeleteMapping(value = "/{memberId}/{boardId}")
     public ResponseEntity<?> deleteBookmark(@PathVariable Long memberId, @PathVariable Long boardId){
-        bookmarkService.deleteBookmark(memberId, boardId);
-        return new ResponseEntity<>(CMRespDto.builder().isSuccess(true).msg("북마크에서 삭제되었습니다.").build(), HttpStatus.OK);
+        try {
+            bookmarkService.deleteBookmark(memberId, boardId);
+            return new ResponseEntity<>(CMRespDto.builder().isSuccess(true)
+                    .msg("북마크에서 삭제되었습니다.").build(), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(CMRespDto.builder().isSuccess(false)
+                    .body(e.getMessage()).msg("북마크 삭제 실패").build(), HttpStatus.OK);
+        }
     }
 
     // 북마크 확인
     @PostMapping("/isBookmark")
-    public Boolean isBookmark(@Valid @RequestBody BoardBookmarkReqDto dto){
+    public boolean isBookmark(@Valid @RequestBody BoardBookmarkReqDto dto){
         try {
             MemberProfileResDto memberProfileResDto = memberService.authMember(dto.getToken());
             return bookmarkService.isBookmark(memberProfileResDto.getId(), dto.getBoardId());
             // return memberProfileResDto.getNickname();
         } catch (IllegalArgumentException e){
-            return null;
+            return false;
         }
     }
 }

@@ -18,7 +18,7 @@ public class Bookmark {
     @Column(nullable = false)
     private Long memberId;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private Long boardId;
 
     @Builder

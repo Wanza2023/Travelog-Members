@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,14 +30,15 @@ public class BookmarkService {
     // 북마크 삭제
     @Transactional
     public void deleteBookmark(Long memberId, Long boardId){
-        Bookmark bookmark = bookmarkRepository.findByMemberIdAndBoardId(memberId, boardId);
+        Bookmark bookmark = bookmarkRepository.findByMemberIdAndBoardId(memberId, boardId)
+                .orElseThrow(()->new IllegalArgumentException("북마크 하지 않은 게시글"));
         bookmarkRepository.delete(bookmark);
     }
 
     // 북마크 확인
     @Transactional
     public boolean isBookmark(Long memberId, Long boardId) {
-        Bookmark bookmark = bookmarkRepository.findByMemberIdAndBoardId(memberId, boardId);
-        return bookmark != null;
+        Optional<Bookmark> bookmark = bookmarkRepository.findByMemberIdAndBoardId(memberId, boardId);
+        return bookmark.isPresent();
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
@@ -13,5 +14,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Long> findByMemberId(Long memberId);
 
     // 북마크한 게시글 검색
-    Bookmark findByMemberIdAndBoardId(Long memberId, Long boardId);
+    Optional<Bookmark> findByMemberIdAndBoardId(Long memberId, Long boardId);
 }
