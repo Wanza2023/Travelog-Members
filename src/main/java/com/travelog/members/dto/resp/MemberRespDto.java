@@ -1,4 +1,4 @@
-package com.travelog.members.dto;
+package com.travelog.members.dto.resp;
 
 import com.travelog.members.member.Member;
 import com.travelog.members.member.MemberRole;

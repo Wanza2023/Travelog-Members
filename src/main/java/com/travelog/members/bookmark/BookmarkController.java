@@ -3,12 +3,11 @@ package com.travelog.members.bookmark;
 import com.travelog.members.board.BoardDto;
 import com.travelog.members.board.BoardServiceFeignClient;
 import com.travelog.members.dto.BoardBookmarkReqDto;
-import com.travelog.members.dto.CMRespDto;
-import com.travelog.members.dto.MemberProfileResDto;
+import com.travelog.members.dto.resp.MemberRespDto;
 import com.travelog.members.member.MemberService;
+import com.travelog.members.dto.resp.CMRespDto;
 import feign.FeignException;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/bookmark")
 public class BookmarkController {
-    @Autowired
+
     private final BoardServiceFeignClient boardServiceFeignClient;
-    @Autowired
     private final BookmarkService bookmarkService;
-    @Autowired
     private final MemberService memberService;
 
     // 북마크 리스트 가져오기
@@ -71,8 +68,8 @@ public class BookmarkController {
     @PostMapping("/isBookmark")
     public boolean isBookmark(@Valid @RequestBody BoardBookmarkReqDto dto){
         try {
-            MemberProfileResDto memberProfileResDto = memberService.authMember(dto.getToken());
-            return bookmarkService.isBookmark(memberProfileResDto.getId(), dto.getBoardId());
+            MemberRespDto member = memberService.authMember(dto.getToken());
+            return bookmarkService.isBookmark(member.getId(), dto.getBoardId());
             // return memberProfileResDto.getNickname();
         } catch (IllegalArgumentException e){
             return false;

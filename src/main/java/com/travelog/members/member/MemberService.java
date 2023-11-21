@@ -1,7 +1,11 @@
 package com.travelog.members.member;
 
 import com.travelog.members.auth.JwtTokenProvider;
-import com.travelog.members.dto.*;
+import com.travelog.members.dto.resp.MemberProfileResDto;
+import com.travelog.members.dto.req.LoginReqDto;
+import com.travelog.members.dto.resp.LoginRespDto;
+import com.travelog.members.dto.resp.MemberRespDto;
+import com.travelog.members.dto.req.SignupReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,7 +53,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(loginReqDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        if (!isPasswordSame(member, loginReqDto.getPassword())) {
+        if (!isPasswordSame(loginReqDto.getPassword(), member)) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
 
@@ -65,14 +69,15 @@ public class MemberService {
     /**
      * 수정
      */
-//    @Transactional
-//    public void updatePassword(Member member, String password) {
-//        if (isPasswordSame(member, password)) {
-//            throw new IllegalArgumentException("동일한 비밀번호입니다.");
-//        }
-//
-//        member.updatePassword(passwordEncoder.encode(password));
-//    }
+    @Transactional
+    public void updatePassword(Long memberId, String password) {
+        Member member = findById(memberId);
+        if (isPasswordSame(password, member)) {
+            throw new IllegalArgumentException("동일한 비밀번호입니다.");
+        }
+
+        member.updatePassword(passwordEncoder.encode(password));
+    }
 
     /**
      * 삭제
@@ -93,7 +98,8 @@ public class MemberService {
      */
     public MemberRespDto authorizeMember(HttpServletRequest request) {
 
-        String token = jwtTokenProvider.resolveToken(request);
+        String header = jwtTokenProvider.getAuthHeader(request);
+        String token = jwtTokenProvider.getToken(header);
 
         if (token == null || !jwtTokenProvider.validateToken(token)) {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
@@ -101,17 +107,15 @@ public class MemberService {
         String email = jwtTokenProvider.getUserPk(token);
         Member findMember = findByEmail(email);
         return new MemberRespDto(findMember);
-
-
     }
 
-    public MemberProfileResDto authMember(String token){
+    public MemberRespDto authMember(String token){
         if (token == null || !jwtTokenProvider.validateToken(token)) {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
         String email = jwtTokenProvider.getUserPk(token);
         Member findMember = findByEmail(email);
-        return new MemberProfileResDto(findMember);
+        return new MemberRespDto(findMember);
     }
 
     // 회원 프로필(닉네임) 조회
@@ -152,7 +156,7 @@ public class MemberService {
     }
 
 
-    public boolean isPasswordSame(Member member, String password) {
+    public boolean isPasswordSame(String password, Member member) {
         return passwordEncoder.matches(password, member.getPassword());
     }
 }

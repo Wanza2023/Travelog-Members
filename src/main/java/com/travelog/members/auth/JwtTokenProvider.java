@@ -68,9 +68,11 @@ public class JwtTokenProvider {
         }
     }
 
-    // Request의 Header에서 token 값 가져오기
-    public String resolveToken(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
+    public String getAuthHeader(HttpServletRequest request) {
+        return request.getHeader("Authorization");
+    }
+
+    public String getToken(String header) {
         if (header == null) throw new IllegalArgumentException("헤더에 Authorization이 없습니다.");
         if (!header.startsWith("Bearer")) throw new IllegalArgumentException("토큰이 Bearer로 시작하지 않습니다.");
 
