@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -44,7 +45,9 @@ public class BookmarkController {
 
     // 북마크 저장
     @PostMapping
-    public ResponseEntity<?> saveBookmark(@Valid @RequestBody Bookmark bookmark){
+    public ResponseEntity<?> saveBookmark(@Valid @RequestBody Bookmark bookmarkReq, HttpServletRequest request){
+        MemberRespDto member = memberService.authorizeMember(request);
+        Bookmark bookmark = new Bookmark(member.getId(), bookmarkReq.getBoardId());
         Long res = bookmarkService.saveBookmark(bookmark);
         return new ResponseEntity<>(CMRespDto.builder()
                 .isSuccess(true).msg("북마크에 저장되었습니다.")
@@ -52,10 +55,11 @@ public class BookmarkController {
     }
 
     // 북마크 삭제
-    @DeleteMapping(value = "/{memberId}/{boardId}")
-    public ResponseEntity<?> deleteBookmark(@PathVariable Long memberId, @PathVariable Long boardId){
+    @DeleteMapping(value = "/{boardId}")
+    public ResponseEntity<?> deleteBookmark(@PathVariable Long boardId, HttpServletRequest request){
+        MemberRespDto member = memberService.authorizeMember(request);
         try {
-            bookmarkService.deleteBookmark(memberId, boardId);
+            bookmarkService.deleteBookmark(member.getId(), boardId);
             return new ResponseEntity<>(CMRespDto.builder().isSuccess(true)
                     .msg("북마크에서 삭제되었습니다.").build(), HttpStatus.OK);
         } catch (Exception e){
@@ -65,7 +69,7 @@ public class BookmarkController {
     }
 
     // 북마크 확인
-    @PostMapping("/isBookmark")
+    @PostMapping(value = "/isBookmark")
     public boolean isBookmark(@Valid @RequestBody BoardBookmarkReqDto dto){
         try {
             MemberRespDto member = memberService.authMember(dto.getToken());
