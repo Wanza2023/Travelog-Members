@@ -57,7 +57,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰 유효성, 만료일자 확인
-    public boolean validateToken(String jwtToken) {
+    public boolean isTokenValid(String jwtToken) {
         try {
             Date now = new Date();
             Date exp = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken).getBody().getExpiration();

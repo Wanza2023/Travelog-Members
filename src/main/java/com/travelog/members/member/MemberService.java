@@ -95,12 +95,27 @@ public class MemberService {
     /**
      * 조회
      */
+    public void validatePasswd(HttpServletRequest request, String passwd) {
+
+        String header = jwtTokenProvider.getAuthHeader(request);
+        String token = jwtTokenProvider.getToken(header);
+
+        if (token == null || !jwtTokenProvider.isTokenValid(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+        String email = jwtTokenProvider.getUserPk(token);
+        Member findMember = findByEmail(email);
+        if (!isPasswordSame(passwd, findMember)) {
+            throw new IllegalArgumentException("비밀번호가 다릅니다.");
+        }
+    }
+
     public MemberRespDto authorizeMember(HttpServletRequest request) {
 
         String header = jwtTokenProvider.getAuthHeader(request);
         String token = jwtTokenProvider.getToken(header);
 
-        if (token == null || !jwtTokenProvider.validateToken(token)) {
+        if (token == null || !jwtTokenProvider.isTokenValid(token)) {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
         String email = jwtTokenProvider.getUserPk(token);
@@ -109,7 +124,7 @@ public class MemberService {
     }
 
     public MemberRespDto authMember(String token){
-        if (token == null || !jwtTokenProvider.validateToken(token)) {
+        if (token == null || !jwtTokenProvider.isTokenValid(token)) {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
         String email = jwtTokenProvider.getUserPk(token);
