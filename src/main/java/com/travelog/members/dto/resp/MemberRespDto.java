@@ -20,7 +20,7 @@ public class MemberRespDto {
     public MemberRespDto(Member member) {
         id = member.getId();
         email = member.getEmail();
-        nickname = member.getNickname();
+        nickname = member.getNickName();
         role = member.getRole();
         birth = member.getBirth();
         gender = member.getGender();

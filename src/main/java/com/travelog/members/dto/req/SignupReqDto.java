@@ -24,7 +24,7 @@ public class SignupReqDto {
 
     @ApiModelProperty(value = "닉네임", example = "한글 닉네임")
     @NotBlank
-    private String nickname;
+    private String nickName;
 
     @ApiModelProperty(value = "생년월일", example = "2000-01-01")
 //    @ApiParam(value = "생년월일", format = "yyyy-MM-dd", example = "yyyy-MM-dd")

@@ -34,7 +34,7 @@ public class MemberService {
         Member member = Member.builder()
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
-                .nickname(dto.getNickname())
+                .nickName(dto.getNickName())
                 .role(MemberRole.MEMBER)
                 .birth(dto.getBirth())
                 .gender(dto.getGender())
@@ -160,24 +160,24 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 이메일입니다."));
     }
 
-    public Member findByNickname(String nickName) {
-        return memberRepository.findByNickname(nickName)
+    public Member findByNickName(String nickName) {
+        return memberRepository.findByNickName(nickName)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 닉네임입니다."));
     }
 
-    public void checkDuplicate(String email, String nickname) {
+    public void checkDuplicate(String email, String nickName) {
         Optional<Member> byEmail = memberRepository.findByEmail(email);
-        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+        Optional<Member> byNickName = memberRepository.findByNickName(nickName);
         if (byEmail.isPresent()) throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-        if (byNickname.isPresent()) throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        if (byNickName.isPresent()) throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
     }
 
     public boolean existByEmail(String email) {
         return memberRepository.existsByEmail(email);
     }
 
-    public boolean existByNickname(String nickname) {
-        return memberRepository.existsByNickname(nickname);
+    public boolean existByNickName(String nickName) {
+        return memberRepository.existsByNickName(nickName);
     }
 
 
