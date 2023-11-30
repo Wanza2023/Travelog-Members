@@ -39,7 +39,7 @@ public class MemberController {
 
         try {
             bindingResultErrorsCheck(bindingResult);
-            memberService.checkDuplicate(dto.getEmail(), dto.getNickName());  //하나라도 존재하면 IllegalArgumentException
+            memberService.checkDuplicate(dto.getEmail(), dto.getNickname());  //하나라도 존재하면 IllegalArgumentException
             Long memberId = memberService.join(dto);
             return new ResponseEntity<>(CMRespDto.builder()
                     .isSuccess(true).msg("회원가입 완료").body("member_id: " + memberId).build(), HttpStatus.OK);
@@ -187,22 +187,29 @@ public class MemberController {
     }
 
     @ApiOperation(value = "닉네임 중복 확인")
-    @GetMapping("/validate/nickname/{nickName}")
-    public ResponseEntity<?> validateNickName(@PathVariable String nickName) {
+    @GetMapping("/validate/nickname/{nickname}")
+    public ResponseEntity<?> validateNickname(@PathVariable String nickname) {
 
-        boolean success = false;
-        String msg = "";
+//        boolean success = false;
+//        String msg = "";
+//
+//        try {
+//            memberService.findByNickname(nickname);
+//            msg = "존재하는 닉네임입니다.";
+//        } catch (IllegalArgumentException e) {
+//            success = true;
+//            msg = "존재하지 않는 닉네임입니다.";
+//        }
+//
+//        return new ResponseEntity<>(CMRespDto.builder()
+//                .isSuccess(success).msg(msg).body(nickname).build(), HttpStatus.OK);
 
-        try {
-            memberService.findByNickName(nickName);
-            msg = "존재하는 닉네임입니다.";
-        } catch (IllegalArgumentException e) {
-            success = true;
-            msg = "존재하지 않는 닉네임입니다.";
-        }
+
+        boolean result = memberService.existByNickname(nickname);
+        String msg = result ? "이미 존재하는 닉네임입니다." : "사용 가능한 닉네임입니다.";
 
         return new ResponseEntity<>(CMRespDto.builder()
-                .isSuccess(success).msg(msg).body(nickName).build(), HttpStatus.OK);
+                .isSuccess(true).msg(msg).body(!result).build(), HttpStatus.OK);
     }
 
 

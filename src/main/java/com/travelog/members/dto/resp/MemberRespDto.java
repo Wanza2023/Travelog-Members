@@ -12,7 +12,7 @@ public class MemberRespDto {
 
     private Long id;
     private String email;
-    private String nickName;
+    private String nickname;
     private MemberRole role;
     private LocalDate birth;
     private char gender;
@@ -20,7 +20,7 @@ public class MemberRespDto {
     public MemberRespDto(Member member) {
         id = member.getId();
         email = member.getEmail();
-        nickName = member.getNickName();
+        nickname = member.getNickname();
         role = member.getRole();
         birth = member.getBirth();
         gender = member.getGender();

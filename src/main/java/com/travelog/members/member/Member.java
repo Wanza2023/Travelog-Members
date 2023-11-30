@@ -21,7 +21,7 @@ public class Member {
     private String password;
 
     @Column(nullable = false, unique = true)
-    private String nickName;
+    private String nickname;
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
@@ -35,9 +35,9 @@ public class Member {
     private byte[] pfp;
 
 
-    public void updateMember(String email, String nickName, LocalDate birth, char gender) {
+    public void updateMember(String email, String nickname, LocalDate birth, char gender) {
         this.email = email;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.birth = birth;
         this.gender = gender;
     }
@@ -49,10 +49,10 @@ public class Member {
 
 
     @Builder
-    public Member(String email, String password, String nickName, MemberRole role, LocalDate birth, char gender, byte[] pfp) {
+    public Member(String email, String password, String nickname, MemberRole role, LocalDate birth, char gender, byte[] pfp) {
         this.email = email;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.role = role;
         this.birth = birth;
         this.gender = gender;
