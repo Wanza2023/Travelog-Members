@@ -172,6 +172,20 @@ public class MemberController {
         }
     }
 
+    /**
+     * 중복 확인
+     */
+    @ApiOperation(value = "이메일 중복 확인")
+    @GetMapping("/validate/email/{email}")
+    public ResponseEntity<?> validateEmail(@PathVariable String email) {
+
+        boolean result = memberService.existByEmail(email);
+        String msg = result ? "이미 존재하는 이메일입니다." : "사용 가능한 이메일입니다.";
+
+        return new ResponseEntity<>(CMRespDto.builder()
+                .isSuccess(true).msg(msg).body(!result).build(), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "닉네임 중복 확인")
     @GetMapping("/validate/nickname/{nickName}")
     public ResponseEntity<?> validateNickName(@PathVariable String nickName) {

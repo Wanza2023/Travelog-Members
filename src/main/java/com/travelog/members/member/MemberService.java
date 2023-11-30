@@ -27,7 +27,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 등록
+     * 회원가입
      */
     @Transactional
     public Long join(SignupReqDto dto) {
@@ -46,6 +46,9 @@ public class MemberService {
         return member.getId();
     }
 
+    /**
+     * 로그인
+     */
     @Transactional
     public LoginRespDto login(LoginReqDto loginReqDto) {
 
@@ -138,6 +141,7 @@ public class MemberService {
         return new MemberRespDto(member);
     }
 
+    // 회원 전체 조회
     public List<MemberRespDto> findAll() {
         List<Member> members = memberRepository.findAll();
         List<MemberRespDto> result = members.stream()
@@ -166,6 +170,10 @@ public class MemberService {
         Optional<Member> byNickName = memberRepository.findByNickName(nickName);
         if (byEmail.isPresent()) throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         if (byNickName.isPresent()) throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+    }
+
+    public boolean existByEmail(String email) {
+        return memberRepository.existsByEmail(email);
     }
 
 
