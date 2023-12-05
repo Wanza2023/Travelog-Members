@@ -1,5 +1,5 @@
 ./gradlew clean
-./gradlew build
+#./gradlew build
 ./gradlew bootJar
 
 if [ -e ${gustjdw/travelog-members:latest} ] ; then
