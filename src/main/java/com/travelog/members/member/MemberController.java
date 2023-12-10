@@ -88,6 +88,7 @@ public class MemberController {
     /**
      * 비밀번호 확인
      */
+    @ApiOperation(value = "비밀번호 확인")
     @PostMapping("/validate/passwd")
     public ResponseEntity<?> validatePasswd(HttpServletRequest request, @RequestBody String passwd) {
 
