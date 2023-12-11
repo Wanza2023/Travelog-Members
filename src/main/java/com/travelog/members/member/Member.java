@@ -31,8 +31,7 @@ public class Member {
     private char gender;
 
     // pfp(profile picture): 프로필 이미지
-    @Lob @Column(columnDefinition = "blob")
-    private byte[] pfp;
+    private String pfp;
 
 
     public void updateMember(String email, String nickName, LocalDate birth, char gender) {
@@ -49,7 +48,7 @@ public class Member {
 
 
     @Builder
-    public Member(String email, String password, String nickName, MemberRole role, LocalDate birth, char gender, byte[] pfp) {
+    public Member(String email, String password, String nickName, MemberRole role, LocalDate birth, char gender, String pfp) {
         this.email = email;
         this.password = password;
         this.nickName = nickName;

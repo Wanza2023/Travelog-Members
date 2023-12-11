@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
+
     // 북마크 목록 불러오기
     @Query("select b.boardId from Bookmark b where b.memberId = :memberId")
     List<Long> findByMemberId(Long memberId);

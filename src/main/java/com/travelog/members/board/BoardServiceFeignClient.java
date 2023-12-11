@@ -10,6 +10,7 @@ import java.util.List;
 
 @FeignClient(name="board")
 public interface BoardServiceFeignClient {
+
     @RequestMapping(method = RequestMethod.POST, value = "/board/bookmark", consumes = "application/json")
     List<BoardDto> getBoards(@RequestBody List<Long> boardIds);
 }
