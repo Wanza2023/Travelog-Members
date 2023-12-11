@@ -1,7 +1,9 @@
 package com.travelog.members.member;
 
 import com.travelog.members.auth.JwtTokenProvider;
+import com.travelog.members.dto.MemberBriefInfoDto;
 import com.travelog.members.dto.req.LoginReqDto;
+import com.travelog.members.dto.req.UpdateReqDto;
 import com.travelog.members.dto.resp.LoginRespDto;
 import com.travelog.members.dto.resp.MemberRespDto;
 import com.travelog.members.dto.req.SignupReqDto;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,18 +55,15 @@ public class MemberService {
     @Transactional
     public LoginRespDto login(LoginReqDto loginReqDto) {
 
-        Member member = memberRepository.findByEmail(loginReqDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        Member member = findByEmail(loginReqDto.getEmail());
 
         if (!isPasswordSame(loginReqDto.getPassword(), member)) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
 
-        // 로그인에 성공하면 email, roles 로 토큰 생성 후 반환
         String token = jwtTokenProvider.createToken(member.getEmail());
 
-        LoginRespDto loginRespDto = new LoginRespDto();
-        loginRespDto.setEmail(loginReqDto.getEmail());
+        LoginRespDto loginRespDto = new LoginRespDto(member);
         loginRespDto.setToken(token);
         return loginRespDto;
     }
@@ -79,6 +79,19 @@ public class MemberService {
         }
 
         member.updatePassword(passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public void updateMember(HttpServletRequest request, UpdateReqDto dto) {
+
+        String header = jwtTokenProvider.getAuthHeader(request);
+        String token = jwtTokenProvider.getToken(header);
+        if (token == null || !jwtTokenProvider.isTokenValid(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+        String email = jwtTokenProvider.getUserPk(token);
+        Member member = findByEmail(email);
+        member.updateMember(dto.getNickName(), dto.getBirth(), dto.getGender(), dto.getPfp());
     }
 
     /**
@@ -98,6 +111,16 @@ public class MemberService {
     /**
      * 조회
      */
+    public List<MemberBriefInfoDto> getBriefInfoById(Long[] memberIds) {
+        ArrayList<MemberBriefInfoDto> result = new ArrayList<>();
+        for (Long memberId : memberIds) {
+            Member member = findById(memberId);
+            MemberBriefInfoDto memberBriefInfoDto = new MemberBriefInfoDto(member);
+            result.add(memberBriefInfoDto);
+        }
+        return result;
+    }
+
     public void validatePasswd(HttpServletRequest request, String passwd) {
 
         String header = jwtTokenProvider.getAuthHeader(request);

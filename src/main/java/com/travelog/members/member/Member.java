@@ -34,11 +34,11 @@ public class Member {
     private String pfp;
 
 
-    public void updateMember(String email, String nickName, LocalDate birth, char gender) {
-        this.email = email;
+    public void updateMember(String nickName, LocalDate birth, char gender, String pfp) {
         this.nickName = nickName;
         this.birth = birth;
         this.gender = gender;
+        this.pfp = pfp;
     }
 
     public void updatePassword(String password) {

@@ -1,7 +1,9 @@
 package com.travelog.members.member;
 
+import com.travelog.members.dto.MemberBriefInfoDto;
 import com.travelog.members.dto.req.LoginReqDto;
 import com.travelog.members.dto.req.SignupReqDto;
+import com.travelog.members.dto.req.UpdateReqDto;
 import com.travelog.members.dto.req.pwReqDto;
 import com.travelog.members.dto.resp.CMRespDto;
 import com.travelog.members.dto.resp.LoginRespDto;
@@ -130,16 +132,29 @@ public class MemberController {
      */
     @ApiOperation(value = "비밀번호 변경")
     @PatchMapping("/password")
-    public ResponseEntity<?> changePassword(@RequestBody pwReqDto reqDto) {
+    public ResponseEntity<?> changePassword(@RequestBody pwReqDto dto) {
         try {
-            Long memberId = reqDto.getMemberId();
-            String password = reqDto.getPassword();
+            Long memberId = dto.getMemberId();
+            String password = dto.getPassword();
             memberService.updatePassword(memberId, password);
             return new ResponseEntity<>(CMRespDto.builder()
                     .isSuccess(true).msg("비밀번호 변경 성공").body("memberId=" + memberId).build(), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(CMRespDto.builder()
-                    .isSuccess(false).msg("비밀번호 변경 실패").body(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+                    .isSuccess(false).msg(e.getMessage()).body(e.getCause()).build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @ApiOperation(value = "회원정보 수정")
+    @PatchMapping("/info")
+    public ResponseEntity<?> updateMember(HttpServletRequest request, @RequestBody UpdateReqDto dto) {
+        try {
+            memberService.updateMember(request, dto);
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(true).msg("회원정보 수정 성공").body(dto).build(), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(false).msg(e.getMessage()).body(e.getCause()).build(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -171,6 +186,12 @@ public class MemberController {
             return new ResponseEntity<>(CMRespDto.builder()
                     .isSuccess(false).msg("토큰으로 회원 조회 실패").body(e.getMessage()).build(), HttpStatus.OK);
         }
+    }
+
+    @ApiOperation(value = "닉네임, 프로필 이미지 조회")
+    @GetMapping("/briefInfo")
+    public List<MemberBriefInfoDto> briefInfo(@RequestBody Long[] memberIds) {
+        return memberService.getBriefInfoById(memberIds);
     }
 
     /**
