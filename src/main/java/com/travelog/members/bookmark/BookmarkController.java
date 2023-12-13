@@ -40,7 +40,20 @@ public class BookmarkController {
                     .isSuccess(true).msg("북마크 가져오기 실패")
                     .body(e.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+    @PostMapping("/bookmarklist")
+    public ResponseEntity<?> getBookmarkByToken(@RequestBody String token) {
+        try {
+            MemberRespDto memberRespDto = memberService.authMember(token);
+            Long memberId = memberRespDto.getId();
+            List<Long> boardIds = bookmarkService.getBoardIds(memberId);
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(true).msg("성공").body(boardIds).build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(false).msg(e.getMessage()).body(e.getCause()).build(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     // 북마크 저장
