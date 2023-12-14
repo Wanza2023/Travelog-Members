@@ -1,14 +1,12 @@
 package com.travelog.members.member;
 
-import com.travelog.members.dto.MemberBriefInfoDto;
+import com.travelog.members.board.BoardServiceFeignClient;
+import com.travelog.members.dto.board.BoardTotalViewsDto;
+import com.travelog.members.dto.resp.*;
 import com.travelog.members.dto.req.LoginReqDto;
 import com.travelog.members.dto.req.SignupReqDto;
 import com.travelog.members.dto.req.UpdateReqDto;
 import com.travelog.members.dto.req.pwReqDto;
-import com.travelog.members.dto.resp.CMRespDto;
-import com.travelog.members.dto.resp.LoginRespDto;
-import com.travelog.members.dto.resp.MemberRespDto;
-import com.travelog.members.dto.resp.PwInquiryRespDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -31,6 +27,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final BoardServiceFeignClient boardServiceFeignClient;
 
     /**
      * 회원가입
@@ -161,6 +158,19 @@ public class MemberController {
     /**
      * 조회
      */
+    @GetMapping("/popular")
+    public ResponseEntity<?> getPopularBlog() {
+        try {
+            List<PopularRespDto> result = memberService.getPopular();
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(true).msg("인기 블로그 조회 성공").body(result).build(), HttpStatus.OK);
+        } catch (Exception e) {
+            log.warn(e.getMessage(), e.getCause());
+            return new ResponseEntity<>(CMRespDto.builder()
+                    .isSuccess(false).msg(e.getMessage()).body(e.getCause()).build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @ApiOperation(value = "회원 프로필(닉네임) 조회", notes = "GET 요청을 보내면 해당 회원 정보를 조회합니다.")
     @GetMapping("/{memberId}")
     public MemberRespDto getMember(@PathVariable Long memberId){
@@ -189,8 +199,8 @@ public class MemberController {
     }
 
     @ApiOperation(value = "닉네임, 프로필 이미지 조회")
-    @GetMapping("/briefInfo")
-    public List<MemberBriefInfoDto> briefInfo(@RequestBody Long[] memberIds) {
+    @PostMapping("/briefInfo")
+    public List<MemberBriefInfoDto> briefInfo(@RequestBody List<Long> memberIds) {
         return memberService.getBriefInfoById(memberIds);
     }
 

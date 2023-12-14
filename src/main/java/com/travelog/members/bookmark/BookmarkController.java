@@ -1,8 +1,8 @@
 package com.travelog.members.bookmark;
 
-import com.travelog.members.dto.BoardDto;
+import com.travelog.members.dto.board.BoardDto;
 import com.travelog.members.board.BoardServiceFeignClient;
-import com.travelog.members.dto.BoardBookmarkReqDto;
+import com.travelog.members.dto.board.BoardBookmarkReqDto;
 import com.travelog.members.dto.resp.MemberRespDto;
 import com.travelog.members.member.MemberService;
 import com.travelog.members.dto.resp.CMRespDto;
@@ -43,17 +43,11 @@ public class BookmarkController {
     }
 
     @PostMapping("/bookmarklist")
-    public ResponseEntity<?> getBookmarkByToken(@RequestBody String token) {
-        try {
-            MemberRespDto memberRespDto = memberService.authMember(token);
-            Long memberId = memberRespDto.getId();
-            List<Long> boardIds = bookmarkService.getBoardIds(memberId);
-            return new ResponseEntity<>(CMRespDto.builder()
-                    .isSuccess(true).msg("성공").body(boardIds).build(), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(CMRespDto.builder()
-                    .isSuccess(false).msg(e.getMessage()).body(e.getCause()).build(), HttpStatus.BAD_REQUEST);
-        }
+    public List<Long> getBookmarkByToken(@RequestBody String token) {
+        MemberRespDto memberRespDto = memberService.authMember(token);
+        Long memberId = memberRespDto.getId();
+        List<Long> boardIds = bookmarkService.getBoardIds(memberId);
+        return boardIds;
     }
 
     // 북마크 저장

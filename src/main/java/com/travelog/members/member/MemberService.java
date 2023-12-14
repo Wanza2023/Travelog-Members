@@ -1,12 +1,15 @@
 package com.travelog.members.member;
 
 import com.travelog.members.auth.JwtTokenProvider;
-import com.travelog.members.dto.MemberBriefInfoDto;
+import com.travelog.members.board.BoardServiceFeignClient;
+import com.travelog.members.dto.board.BoardTotalViewsDto;
+import com.travelog.members.dto.resp.MemberBriefInfoDto;
 import com.travelog.members.dto.req.LoginReqDto;
 import com.travelog.members.dto.req.UpdateReqDto;
 import com.travelog.members.dto.resp.LoginRespDto;
 import com.travelog.members.dto.resp.MemberRespDto;
 import com.travelog.members.dto.req.SignupReqDto;
+import com.travelog.members.dto.resp.PopularRespDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +31,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final BoardServiceFeignClient boardServiceFeignClient;
 
     /**
      * 회원가입
@@ -111,7 +115,22 @@ public class MemberService {
     /**
      * 조회
      */
-    public List<MemberBriefInfoDto> getBriefInfoById(Long[] memberIds) {
+    public List<PopularRespDto> getPopular() throws Exception {
+        List<BoardTotalViewsDto> totalViews = boardServiceFeignClient.getTotalViews();
+        List<PopularRespDto> result = new ArrayList<>();
+        for (BoardTotalViewsDto totalView : totalViews) {
+            Long memberId = totalView.getMemberId();
+            Member member = findById(memberId);
+            String nickName = member.getNickName();
+            String pfp = member.getPfp();
+            Long views = totalView.getTotalViews();
+            PopularRespDto popularRespDto = new PopularRespDto(memberId, nickName, pfp, views);
+            result.add(popularRespDto);
+        }
+        return result;
+    }
+
+    public List<MemberBriefInfoDto> getBriefInfoById(List<Long> memberIds) {
         ArrayList<MemberBriefInfoDto> result = new ArrayList<>();
         for (Long memberId : memberIds) {
             Member member = findById(memberId);
