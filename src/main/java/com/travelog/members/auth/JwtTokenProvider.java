@@ -32,9 +32,9 @@ public class JwtTokenProvider {
     // 토큰 생성
     public String createToken(String userPk) {  // userPK = email
 
-        long tokenValidTime = 30 * 60 * 1000L;  // 토큰 유효시간 30분
+        long tokenValidTime = 1000L * 60 * 60 * 3;  // 토큰 유효 시간 3시간
         Date now = new Date();  // 토큰 발행 시간 정보
-        Date exp = new Date(now.getTime() + tokenValidTime);  // 토큰 유효시각 설정
+        Date exp = new Date(now.getTime() + tokenValidTime);  // 토큰 유효 시간 설정
 
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
