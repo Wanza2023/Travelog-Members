@@ -3,19 +3,22 @@ package com.travelog.members.bookmark;
 import com.travelog.members.dto.board.BoardDto;
 import com.travelog.members.board.BoardServiceFeignClient;
 import com.travelog.members.dto.board.BoardBookmarkReqDto;
+import com.travelog.members.dto.board.BookmarkDto;
 import com.travelog.members.dto.resp.MemberRespDto;
 import com.travelog.members.member.MemberService;
 import com.travelog.members.dto.resp.CMRespDto;
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookmark")
@@ -28,17 +31,23 @@ public class BookmarkController {
     // 북마크 리스트 가져오기
     @GetMapping(value = "/{memberId}")
     public ResponseEntity<?> getBookmark(@PathVariable Long memberId){
-        List<Long> boardIds = bookmarkService.getBoardIds(memberId);
+
         try {
-            List<BoardDto> bookmarks = boardServiceFeignClient.getBoards(boardIds);
+            List<BookmarkDto> result = new ArrayList<>();
+            List<Long> boardIds = bookmarkService.getBoardIds(memberId);
+            List<BoardDto> boardDtos = boardServiceFeignClient.getBoards(boardIds);
+            for (BoardDto boardDto : boardDtos) {
+                String nickName = boardDto.getNickname();
+                String pfp = memberService.getPfpByNickName(nickName);
+                BookmarkDto bookmarkDto = new BookmarkDto(boardDto, pfp);
+                result.add(bookmarkDto);
+            }
             return new ResponseEntity<>(CMRespDto.builder()
-                    .isSuccess(true).msg("해당 회원의 북마크 리스트")
-                    .body(bookmarks).build(), HttpStatus.OK);
-        } catch (FeignException e) {
-            System.out.println(e.getMessage());
+                    .isSuccess(true).msg("해당 회원의 북마크 리스트").body(result).build(), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e.getCause());
             return new ResponseEntity<>(CMRespDto.builder()
-                    .isSuccess(true).msg("북마크 가져오기 실패")
-                    .body(e.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    .isSuccess(true).msg("북마크 가져오기 실패").body(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -115,7 +115,11 @@ public class MemberService {
     /**
      * 조회
      */
-    public List<PopularRespDto> getPopular() throws Exception {
+    public String getPfpByNickName(String nickName) {
+        return memberRepository.getPfpByNickName(nickName);
+    }
+
+    public List<PopularRespDto> getPopular() {
         List<BoardTotalViewsDto> totalViews = boardServiceFeignClient.getTotalViews();
         List<PopularRespDto> result = new ArrayList<>();
         for (BoardTotalViewsDto totalView : totalViews) {

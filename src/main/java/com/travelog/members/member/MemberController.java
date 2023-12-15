@@ -1,7 +1,5 @@
 package com.travelog.members.member;
 
-import com.travelog.members.board.BoardServiceFeignClient;
-import com.travelog.members.dto.board.BoardTotalViewsDto;
 import com.travelog.members.dto.resp.*;
 import com.travelog.members.dto.req.LoginReqDto;
 import com.travelog.members.dto.req.SignupReqDto;
@@ -27,7 +25,6 @@ import java.util.*;
 public class MemberController {
 
     private final MemberService memberService;
-    private final BoardServiceFeignClient boardServiceFeignClient;
 
     /**
      * 회원가입
@@ -158,6 +155,7 @@ public class MemberController {
     /**
      * 조회
      */
+    @ApiOperation(value = "인기 블로그 조회")
     @GetMapping("/popular")
     public ResponseEntity<?> getPopularBlog() {
         try {
@@ -204,6 +202,7 @@ public class MemberController {
         return memberService.getBriefInfoById(memberIds);
     }
 
+    @ApiOperation(value = "닉네임으로 memberId, nickName, pfp 조회")
     @GetMapping("/briefInfo/{nickName}")
     public MemberBriefInfoDto briefInfo(@PathVariable String nickName) {
         try {

@@ -1,7 +1,6 @@
 package com.travelog.members.bookmark;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,14 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookmarkService {
 
-    @Autowired
     private final BookmarkRepository bookmarkRepository;
 
     // 북마크 조회
-    @Transactional(readOnly = true)
     public List<Long> getBoardIds(Long memberId){
         return bookmarkRepository.findByMemberId(memberId);
     }
