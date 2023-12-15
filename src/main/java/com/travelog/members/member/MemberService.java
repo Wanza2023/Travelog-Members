@@ -140,6 +140,11 @@ public class MemberService {
         return result;
     }
 
+    public MemberBriefInfoDto getBriefInfoByNickName(String nickName) {
+        Member member = findByNickName(nickName);
+        return new MemberBriefInfoDto(member);
+    }
+
     public void validatePasswd(HttpServletRequest request, String passwd) {
 
         String header = jwtTokenProvider.getAuthHeader(request);

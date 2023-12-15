@@ -204,6 +204,16 @@ public class MemberController {
         return memberService.getBriefInfoById(memberIds);
     }
 
+    @GetMapping("/briefInfo/{nickName}")
+    public MemberBriefInfoDto briefInfo(@PathVariable String nickName) {
+        try {
+            return memberService.getBriefInfoByNickName(nickName);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e.getCause());
+            return null;
+        }
+    }
+
     /**
      * 중복 확인
      */
